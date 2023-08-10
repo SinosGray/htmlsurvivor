@@ -1,0 +1,37 @@
+<!--index.html-->
+
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Hello World!</title>
+</head>
+
+
+<body>
+    <h1 id="head"> game </h1>
+    <h2 id="interval"></h2>
+    <h2 id="mouse_x"></h2>
+    <h2 id="mouse_y"></h2>
+
+    <canvas id="html_canvas" width="1100" height="600" tabindex='1'>
+
+        <script type="module" src="./js/renderer.js"></script>
+
+
+
+</body>
+
+<img id="main_role" src="assets/main_role.png">
+<img id="enemy1" src="assets/enemy1.png">
+<img id="enemy2" src="assets/enemy2.png">
+<img id="enemy3" src="assets/enemy3.png">
+<img id="bullet1" src="assets/bullet1.png">
+<img id="bullet2" src="assets/bullet2.png">
+<img id="explosion" src="assets/explosion.png">
+
+</html>
