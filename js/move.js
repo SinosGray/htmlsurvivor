@@ -46,6 +46,7 @@ function attack_detect(interval) {
             }
             if (enemy.life <= 0) {
                 datas.player.get_exp(enemy.exp)
+                
                 if (enemy.bullet_setinterval != undefined)
                     clearInterval(enemy.bullet_setinterval)
                 if (enemy.enemy_setinterval != undefined)
