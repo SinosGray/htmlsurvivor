@@ -49,14 +49,30 @@ class Datas {
     constructor() {
         this.enemy_list = []
         this.bullet_list = []
+        this.player = null
+        this.generator = null
     }
 
-    get_all_bullet() {
-        var bullet_list = []
-        this.enemy_list.forEach(enemy => enemy.bullet_list.forEach(bullet => bullet_list.push(bullet)))
-        this.player.play_character.bullet_list.forEach(bullet => bullet_list.push(bullet))
-        return bullet_list
+    clear_datas() {
+        if(this.generator){
+            this.generator.stop_generate()
+        }
+        if(this.player){
+            this.player.play_character.clear_self()
+        }
+        for (let i = this.enemy_list.length-1; i >= 0; i--)
+            this.enemy_list[i].clear_self(i)
+        this.bullet_list = []
+        
     }
+
+    startup(){
+        if(this.player){
+            this.player.play_character.start_up()
+        }
+    }
+
+
 }
 
 
@@ -76,7 +92,7 @@ class Character {
 
         this.init_from_json(json)
         this.origin_life = this.life
-        
+
         this.move_func = this.direction_straight
         switch (this.move_type) {
             case "circle":
@@ -162,6 +178,10 @@ class Player {
             console.log("exp: " + max_exp)
         }
     }
+
+    clear_player_char(){
+        this.clear_player_char.clear_self()
+    }
 }
 
 
@@ -169,7 +189,10 @@ class Enemy extends Character {
     constructor(point, uid, direction, dst_cha, json) {
         super(point, uid, direction, dst_cha, json)
         this.bullet_list = []
-
+        this.start_up()
+        
+    }
+    start_up(){
         if (this.bullet == true)
             this.bullet_setinterval = setInterval(() => {
                 this.generate_bullet(this.generate_uid("bullet"), this.bullet_type)
@@ -177,11 +200,9 @@ class Enemy extends Character {
         if (this.generate_enemy == true)
             this.enemy_setinterval = setInterval(() => {
                 var generate_enemy_data = this.enemy_json.find(data => data.type == this.generate_enemy_type)
-
                 this.datas.enemy_list.push(new Enemy(this.point.clone(), this.generate_uid("generate_enemy"), 0, this.dst_cha, generate_enemy_data, this.bullet_json, this.enemy_json, this.datas))
             }, this.generate_interval);
     }
-
     generate_bullet(uid, bullet_type) {
         var bullet_data = this.bullet_json.find(data => data.type == bullet_type)
 
@@ -202,6 +223,7 @@ class Enemy extends Character {
         for (let i = bullet_list.length - 1; i >= 0; i--) {
             let bullet = bullet_list[i]
             if (bullet.uid == uid) {
+                clearTimeout(bullet.timeout)
                 bullet_list.splice(i, 1)
                 break
             }
@@ -231,6 +253,16 @@ class Enemy extends Character {
         }
     }
 
+    clear_self(number = NaN) {
+        if (this.bullet_setinterval != undefined)
+            clearInterval(this.bullet_setinterval)
+        if (this.enemy_setinterval != undefined)
+            clearInterval(this.enemy_setinterval)
+        this.bullet_list = []
+        if (!isNaN(number))
+            this.datas.enemy_list.splice(number, 1)
+    }
+
 }
 
 class Bullet extends Character {
@@ -238,6 +270,7 @@ class Bullet extends Character {
         super(point, uid, direction, dst_cha, json)
         this.parent = parent
         this.exploded = false
+        this.timeout = null
     }
 
     bullet_be_attacked() {
@@ -252,7 +285,7 @@ class Bullet extends Character {
                 this.hit_radius = this.explosion_radius
                 this.speed = 0
 
-                setTimeout(() => {
+                this.timeout = setTimeout(() => {
                     this.attack = 0
                     setTimeout(() => {
                         this.parent.remove_bullet(this.uid)
@@ -276,6 +309,7 @@ class EnemyGenerator {
         this.timeout = timeout
         this.enemy_json = enemy_json
         this.bullet_json = bullet_json
+        this.generator = null
     }
 
     generate_edge_enemy(uid, dst_cha, direction = 0) {
@@ -288,7 +322,7 @@ class EnemyGenerator {
     generate() {
         var enemy_number = 0
         var dst_cha = this.datas.player.play_character
-        setInterval(() => {
+        this.generator = setInterval(() => {
             this.generate_edge_enemy("enemy" + enemy_number++, dst_cha)
         }, this.timeout);
     }
@@ -304,6 +338,10 @@ class EnemyGenerator {
         else
             return this.canvas_root.canvas_p2phy_p(new Point(0, this.canvas_root.__canvas_height * Math.random()))
     }
+
+    stop_generate(){
+        clearInterval(this.generator)
+    }
 }
 
 var canvas_root
@@ -314,6 +352,7 @@ var bullet_json
 var attack_internal
 var explode_img_time
 var frame_interval
+
 
 function init() {
     canvas_root = new CanvasRoot()

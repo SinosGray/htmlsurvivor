@@ -14,6 +14,7 @@ a vampire suvivor like game in electron js
 - prototype
 - 暂停
 - 可变的 enenmy generator
+- animation
 
 ### equipment
 
@@ -35,8 +36,8 @@ a vampire suvivor like game in electron js
   - generate new enemy ✅  bug: interval stop
   - 超出边界不消失 ✅
 - bullet
-  - explode, aoe, duration
-  - split
+  - explode, aoe, duration ✅
+  - split ✅
   - move_type 
   - player bullet track enemy
 - player
