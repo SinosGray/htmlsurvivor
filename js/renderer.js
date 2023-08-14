@@ -3,6 +3,7 @@
 import { EnemyGenerator, datas, canvas_root, init, frame_interval } from "./gamedata.js"
 import { DrawAll } from "./Draw.js"
 import { move_all, attack_detect } from "./move.js"
+import { Chart } from "./chart.js"
 
 
 var canvas = document.getElementById("html_canvas")
@@ -54,7 +55,7 @@ var ctx = canvas.getContext("2d")
 var timestamp = Date.now()
 
 var turn = 0
-var turn_time = 10
+var turn_time = 60
 var request_animate_id
 document.getElementById("levelup_end").onclick = () => {
   end_levelup()
@@ -62,6 +63,7 @@ document.getElementById("levelup_end").onclick = () => {
 }
 init()
 datas.clear_datas()
+var chart = new Chart(document.getElementById("chart_canvas"), "enemy_quantity")
 begin_game()
 
 
@@ -115,6 +117,7 @@ function timer_countdown(turn_time) {
   }, 1e3 * (total_time + timer_bias))
   timer = setInterval(() => {
     html_countdown.innerHTML = total_time
+    chart.update_single_value(datas.enemy_list.length)
     total_time--
   }, 1e3)
 }

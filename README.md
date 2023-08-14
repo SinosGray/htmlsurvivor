@@ -40,5 +40,6 @@ a vampire suvivor like game in electron js
   - split ✅
   - move_type 
   - player bullet track enemy
+  - explode animation 🍬
 - player
   - armor
