@@ -75,28 +75,7 @@ var enemy_str = String.raw`
         }
     ]
     `
-
-var player_str = String.raw`
-    {
-        "type": "player",
-        "speed": 60,
-        "attack": 0,
-        "life": 100,
-        "hit_radius": 100,
-        "img": "main_role",
-        "size": [
-            50,
-            50
-        ],
-        "move_type": "line",
-        "bullet": true,
-        "bullet_type": "b1",
-        "bullet_interval": 1000,
-        "bullet_column": 2
-    }
-    `
-
- var bullet_str = String.raw`
+var bullet_str = String.raw`
     [
         {
             "type": "b1",
@@ -124,4 +103,56 @@ var player_str = String.raw`
         }
     ]    
     `
-    export{enemy_str, player_str, bullet_str}
+
+var player_str = String.raw`
+    {
+        "type": "player",
+        "speed": 60,
+        "attack": 0,
+        "life": 100,
+        "hit_radius": 100,
+        "img": "main_role",
+        "size": [
+            50,
+            50
+        ],
+        "move_type": "line",
+        "bullet": true,
+        "bullet_type": "b1",
+        "bullet_interval": 1000,
+        "bullet_column": 2
+    }
+    `
+
+var equipment_str = String.raw`
+    [
+        {
+            "type": "all in one",
+            "attack":[100, 1],
+            "origin_life":[100, 1],
+            "origin_speed":[100, 1],
+            "bullet_interval":[1000,1],
+            "bullet_column":[1, 1]
+
+        },
+        {
+            "type": "all in two",
+            "attack":[100, 1],
+            "origin_life":[100, 1],
+            "origin_speed":[100, 1],
+            "bullet_interval":[1000,1],
+            "bullet_column":[1, 1]
+
+        },
+        {
+            "type": "all in three",
+            "attack":[100, 1],
+            "origin_life":[100, 1],
+            "origin_speed":[100, 1],
+            "bullet_interval":[1000,1],
+            "bullet_column":[1, 1]
+
+        }
+    ]    
+    `
+export { enemy_str, player_str, bullet_str, equipment_str }

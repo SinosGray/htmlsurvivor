@@ -1,4 +1,5 @@
-import { enemy_str, player_str, bullet_str } from "./json.js"
+import { enemy_str, player_str, bullet_str, equipment_str } from "./json.js"
+import { ArrayHas } from "./utils.js"
 class Point {
     constructor(x, y) {
         this.x = x
@@ -39,8 +40,6 @@ class CanvasRoot {
     }
 }
 
-
-
 function distance2p(point_a, point_b) {
     return Math.sqrt((point_a.x - point_b.x) ** 2 + (point_a.y - point_b.y) ** 2)
 }
@@ -50,33 +49,32 @@ class Datas {
         this.enemy_list = []
         this.bullet_list = []
         this.player = null
-        this.generator = null
+        this.enemy_generator = null
+        this.equipment_generator = new EquipmentGenerator()
+
     }
 
     clear_datas() {
-        if(this.generator){
-            this.generator.stop_generate()
+        if (this.enemy_generator) {
+            this.enemy_generator.stop_generate()
         }
-        if(this.player){
+        if (this.player) {
             this.player.play_character.clear_self()
         }
-        for (let i = this.enemy_list.length-1; i >= 0; i--)
+        for (let i = this.enemy_list.length - 1; i >= 0; i--)
             this.enemy_list[i].clear_self(i)
         this.bullet_list = []
-        
+
     }
 
-    startup(){
-        if(this.player){
+    startup() {
+        if (this.player) {
             this.player.play_character.start_up()
         }
     }
 
 
 }
-
-
-
 
 class Character {
     constructor(point, uid, direction, dst_cha, json) {
@@ -131,7 +129,7 @@ class Character {
     }
 
     init_from_json(json) {
-        for (var key in json) {
+        for (let key in json) {
             if (Object.prototype.hasOwnProperty.call(json, key)) {
                 this[key] = json[key];
             }
@@ -162,6 +160,7 @@ class Player {
     constructor(player_character) {
         this.play_character = player_character
         this.level = 0
+        this.leveled = 0
         this.exp = 0
         this.play_character.origin_speed = player_character.speed
         this.play_character.speed = 0
@@ -179,20 +178,19 @@ class Player {
         }
     }
 
-    clear_player_char(){
+    clear_player_char() {
         this.clear_player_char.clear_self()
     }
 }
-
 
 class Enemy extends Character {
     constructor(point, uid, direction, dst_cha, json) {
         super(point, uid, direction, dst_cha, json)
         this.bullet_list = []
         this.start_up()
-        
+
     }
-    start_up(){
+    start_up() {
         if (this.bullet == true)
             this.bullet_setinterval = setInterval(() => {
                 this.generate_bullet(this.generate_uid("bullet"), this.bullet_type)
@@ -301,7 +299,6 @@ class Bullet extends Character {
 
 }
 
-
 class EnemyGenerator {
     constructor(timeout) {
         this.canvas_root = canvas_root
@@ -339,8 +336,52 @@ class EnemyGenerator {
             return this.canvas_root.canvas_p2phy_p(new Point(0, this.canvas_root.__canvas_height * Math.random()))
     }
 
-    stop_generate(){
+    stop_generate() {
         clearInterval(this.generator)
+    }
+}
+
+class Equipment {
+    constructor(json) {
+        this.json = json
+        for (let key in json) {
+            if (Object.prototype.hasOwnProperty.call(json, key)) {
+                this[key] = json[key];
+            }
+        }
+    }
+}
+
+class EquipmentGenerator {
+    constructor() {
+        this.equipment_json = equipment_json
+    }
+
+    generate_random_equipments(equipment_quantity) {
+        let equipments = new Array(3)
+        let i = 0
+        while (i < equipment_quantity) {
+            var random_equipment_data = this.equipment_json[Math.floor(Math.random() * this.equipment_json.length)]
+            var equipment = new Equipment(random_equipment_data)
+            if (!ArrayHas(equipments, equipment)) {
+                equipments[i] = equipment
+                i++
+            }
+        }
+
+        return equipments
+    }
+
+}
+
+function equip(cha, equipment) {
+    for (let cha_key in cha) {
+        for (let equipment_key in equipment) {
+            if (cha_key == equipment_key) {
+                cha[cha_key] += equipment[equipment_key][0] * equipment[equipment_key][1]
+                continue
+            }
+        }
     }
 }
 
@@ -349,6 +390,7 @@ var datas
 var enemy_json
 var player_json
 var bullet_json
+var equipment_json
 var attack_internal
 var explode_img_time
 var frame_interval
@@ -359,6 +401,7 @@ function init() {
     enemy_json = JSON.parse(enemy_str)
     player_json = JSON.parse(player_str)
     bullet_json = JSON.parse(bullet_str)
+    equipment_json = JSON.parse(equipment_str)
 
 
     datas = new Datas()
@@ -369,4 +412,4 @@ function init() {
 
 
 }
-export { Enemy, Bullet, EnemyGenerator, Point, canvas_root, datas, init, attack_internal, frame_interval }
+export { Enemy, Bullet, EnemyGenerator, Point, canvas_root, datas, init, attack_internal, frame_interval, equip }

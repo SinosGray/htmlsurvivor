@@ -1,6 +1,6 @@
 "use strict"
 
-import { EnemyGenerator, datas, canvas_root, init, frame_interval } from "./gamedata.js"
+import { EnemyGenerator, datas, canvas_root, init, frame_interval, equip } from "./gamedata.js"
 import { DrawAll } from "./Draw.js"
 import { move_all, attack_detect } from "./move.js"
 import { Chart } from "./chart.js"
@@ -55,12 +55,21 @@ var ctx = canvas.getContext("2d")
 var timestamp = Date.now()
 
 var turn = 0
-var turn_time = 60
+var turn_time = 3
 var request_animate_id
 document.getElementById("levelup_end").onclick = () => {
   end_levelup()
   begin_game()
 }
+
+var choices_quantity = 3
+var button_choices = []
+for (let i = 1; i <= choices_quantity; i++) {
+  button_choices.push(document.getElementById("levelup" + i))
+}
+
+
+
 init()
 datas.clear_datas()
 var chart = new Chart(document.getElementById("chart_canvas"), "enemy_quantity")
@@ -69,8 +78,8 @@ begin_game()
 
 function begin_game() {
   change_game_title("gaming")
-  datas.generator = new EnemyGenerator(1000)
-  datas.generator.generate()
+  datas.enemy_generator = new EnemyGenerator(1000)
+  datas.enemy_generator.generate()
   datas.startup()
   timer_countdown(turn_time)
   game_loop()
@@ -86,6 +95,12 @@ function end_game() {
 
 function begin_levelup() {
   change_game_title("level up")
+  let levelup_choices = datas.equipment_generator.generate_random_equipments(choices_quantity)
+  for (let i = 0; i < choices_quantity; i++) {
+    button_choices[i].innerHTML=levelup_choices[i].type
+  }
+  
+
 }
 
 function end_levelup() {

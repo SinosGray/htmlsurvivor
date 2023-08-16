@@ -20,10 +20,36 @@
     <h2 id="mouse_x"></h2>
     <h2 id="mouse_y"></h2>
 
-    <canvas id="html_canvas" width="1100" height="600" tabindex='1'></canvas>
+    <div id="canvas_div" style="position: absolute;z-index: 1">
+        <canvas id="html_canvas" width="1100" height="600" tabindex='1'></canvas>
+    </div>
+
+
+
+    <table>
+        <tbody>
+            <tr>
+                <td><button id="levelup1">levup1</button></td>
+            </tr>
+            <tr>
+                <td><button id="levelup2">levup2</button></td>
+            </tr>
+            <tr>
+                <td><button id="levelup3">levup3</button></td>
+            </tr>
+        </tbody>
+        <colgroup>
+            <col>
+        </colgroup>
+    </table>
+
+
+
+
+
     <canvas id="chart_canvas" width="600" height="400" tabindex='2'>
 
-    <script type="module" src="./js/renderer.js"></script>
+        <script type="module" src="./js/renderer.js"></script>
 
 
 
